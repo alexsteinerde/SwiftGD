@@ -6,34 +6,22 @@ import Foundation
 public struct Point {
 
     /// The x-coordinate of the point.
-    public var x: Int
+    public var x: Int32
 
     /// The y-coordinate of the point.
-    public var y: Int
-
-    /// Creates a point with specified coordinates.
-    ///
-    /// - Parameters:
-    ///   - x: The x-coordinate of the point
-    ///   - y: The y-coordinate of the point
-    public init(x: Int, y: Int) {
-        self.x = x
-        self.y = y
-    }
-}
-
-extension Point {
+    public var y: Int32
 
     /// The point at the origin (0,0).
     public static let zero = Point(x: 0, y: 0)
 
-    /// Creates a point with specified coordinates.
+    /// Initializes a new point at given coordinates.
     ///
     /// - Parameters:
-    ///   - x: The x-coordinate of the point
-    ///   - y: The y-coordinate of the point
+    ///   - x: The x-coordinate of the point.
+    ///   - y: The y-coordinate of the point.
     public init(x: Int32, y: Int32) {
-        self.init(x: Int(x), y: Int(y))
+        self.x = x
+        self.y = y
     }
 }
 
@@ -58,34 +46,22 @@ extension Point: Equatable {
 public struct Size {
 
     /// The width value of the size.
-    public var width: Int
+    public var width: Int32
 
     /// The height value of the size.
-    public var height: Int
-
-    /// Creates a size with specified dimensions.
-    ///
-    /// - Parameters:
-    ///   - width: The width value of the size
-    ///   - height: The height value of the size
-    public init(width: Int, height: Int) {
-        self.width = width
-        self.height = height
-    }
-}
-
-extension Size {
+    public var height: Int32
 
     /// Size whose width and height are both zero.
     public static let zero = Size(width: 0, height: 0)
 
-    /// Creates a size with specified dimensions.
+    /// Initializes a new size of given dimensions.
     ///
     /// - Parameters:
-    ///   - width: The width value of the size
-    ///   - height: The height value of the size
+    ///   - width: The width value of the size.
+    ///   - height: The height value of the size.
     public init(width: Int32, height: Int32) {
-        self.init(width: Int(width), height: Int(height))
+        self.width = width
+        self.height = height
     }
 }
 
@@ -102,7 +78,7 @@ extension Size: Comparable {
     ///   - lhs: A value to compare.
     ///   - rhs: Another value to compare.
     public static func < (lhs: Size, rhs: Size) -> Bool {
-        return lhs.width < rhs.width && lhs.height < rhs.height
+        return lhs.width * lhs.height < rhs.width * rhs.height
     }
 
     /// Returns a Boolean value indicating whether two values are equal.
@@ -124,18 +100,26 @@ extension Size: Comparable {
 public struct Rectangle {
 
     /// The origin of the rectangle.
-    public var point: Point
+    public var origin: Point
 
     /// The size of the rectangle.
     public var size: Size
 
-    /// Creates a rectangle at specified point and given size.
+    /// The center point of the rectangle.
+    public var center: Point {
+        return Point(
+            x: origin.x + (size.width >> 1),
+            y: origin.x + (size.height >> 1)
+        )
+    }
+
+    /// Initializes a new rectangle at given point of given size.
     ///
     /// - Parameters:
-    ///   - point: The origin of the rectangle
-    ///   - height: The size of the rectangle
-    public init(point: Point, size: Size) {
-        self.point = point
+    ///   - origin: The origin of the rectangle.
+    ///   - size: The size of the rectangle.
+    public init(origin: Point, size: Size) {
+        self.origin = origin
         self.size = size
     }
 }
@@ -143,18 +127,7 @@ public struct Rectangle {
 extension Rectangle {
 
     /// Rectangle at the origin whose width and height are both zero.
-    public static let zero = Rectangle(point: .zero, size: .zero)
-
-    /// Creates a rectangle at specified point and given size.
-    ///
-    /// - Parameters:
-    ///   - x: The x-coordinate of the point
-    ///   - y: The y-coordinate of the point
-    ///   - width: The width value of the size
-    ///   - height: The height value of the size
-    public init(x: Int, y: Int, width: Int, height: Int) {
-        self.init(point: Point(x: x, y: y), size: Size(width: width, height: height))
-    }
+    public static let zero = Rectangle(origin: .zero, size: .zero)
 
     /// Creates a rectangle at specified point and given size.
     ///
@@ -164,7 +137,7 @@ extension Rectangle {
     ///   - width: The width value of the size
     ///   - height: The height value of the size
     public init(x: Int32, y: Int32, width: Int32, height: Int32) {
-        self.init(x: Int(x), y: Int(y), width: Int(width), height: Int(height))
+        self.init(origin: Point(x: x, y: y), size: Size(width: width, height: height))
     }
 }
 
@@ -179,7 +152,6 @@ extension Rectangle: Equatable {
     ///   - lhs: A value to compare.
     ///   - rhs: Another value to compare.
     public static func == (lhs: Rectangle, rhs: Rectangle) -> Bool {
-        return lhs.point == rhs.point && lhs.size == rhs.size
+        return lhs.origin == rhs.origin && lhs.size == rhs.size
     }
 }
-
